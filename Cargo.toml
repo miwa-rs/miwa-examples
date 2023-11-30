@@ -10,5 +10,11 @@ axum = "0.6.20"
 tokio = { version = "1.28.1", features = ["full"] }
 tracing = "0.1.37"
 miwa = { git="https://github.com/miwa-rs/miwa.git" }
-miwa_web = { git="https://github.com/miwa-rs/miwa-web.git" }
+miwa-axum = { git="https://github.com/miwa-rs/miwa-web.git" }
 tracing-subscriber = "0.3.16"
+serde={version = "1", features= ["derive"]}
+serde_json={version = "1"}
+async-trait = "0.1.68"
+uuid = { version = "1.6.1", features = ["v4", "serde"]}
+thiserror = "1.0.50"
+anyhow = "1.0.75"
