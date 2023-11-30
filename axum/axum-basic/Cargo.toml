@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 miwa = { workspace= true }
+miwa-axum = { workspace= true }
 tokio = {workspace = true}
 tracing-subscriber = {workspace = true}
