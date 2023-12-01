@@ -7,6 +7,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
 
     System::prepare()
+        .with_env("MIWA")
         .build()?
         .add_extension(web_service_extension)
         .add_extension(todo_api_extension)
