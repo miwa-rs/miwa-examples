@@ -1,6 +1,6 @@
 use axum::routing::{get, patch};
 use axum::Router;
-use miwa::core::{Extension, ExtensionConfig, SystemContext, SystemResult};
+use miwa::core::{Extension, ExtensionConfig, MiwaContext, MiwaResult};
 use miwa::derive::{extension, ExtensionConfig};
 use miwa_axum::{WebService, WebServiceConfigBuilder};
 use serde::Deserialize;
@@ -12,11 +12,11 @@ pub struct TodoApiExtension;
 
 #[async_trait::async_trait]
 impl Extension for TodoApiExtension {
-    async fn start(&self) -> SystemResult<()> {
+    async fn start(&self) -> MiwaResult<()> {
         Ok(())
     }
 
-    async fn shutdown(&self) -> SystemResult<()> {
+    async fn shutdown(&self) -> MiwaResult<()> {
         Ok(())
     }
 }
@@ -25,17 +25,17 @@ pub struct TodoStoreExtension;
 
 #[async_trait::async_trait]
 impl Extension for TodoStoreExtension {
-    async fn start(&self) -> SystemResult<()> {
+    async fn start(&self) -> MiwaResult<()> {
         Ok(())
     }
 
-    async fn shutdown(&self) -> SystemResult<()> {
+    async fn shutdown(&self) -> MiwaResult<()> {
         Ok(())
     }
 }
 
 #[extension(name = "Todo In Memory extension", provides(TodoRepoImpl))]
-pub async fn todo_repo_extension(ctx: &SystemContext) -> SystemResult<TodoStoreExtension> {
+pub async fn todo_repo_extension(ctx: &MiwaContext) -> MiwaResult<TodoStoreExtension> {
     ctx.register(TodoRepoImpl::new(InMemoryTodoRepo::new()));
     Ok(TodoStoreExtension)
 }
@@ -51,7 +51,7 @@ pub async fn todo_api_extension(
     web: WebService,
     repo: TodoRepoImpl,
     ExtensionConfig(cfg): ExtensionConfig<TodoApi>,
-) -> SystemResult<TodoApiExtension> {
+) -> MiwaResult<TodoApiExtension> {
     web.add_server(
         WebServiceConfigBuilder::default()
             .port(cfg.port)
