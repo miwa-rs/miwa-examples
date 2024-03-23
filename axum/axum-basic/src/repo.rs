@@ -1,10 +1,9 @@
 use std::{
     collections::HashMap,
-    ops::Deref,
     sync::{Arc, RwLock},
 };
 
-use miwa::derive::Injectable;
+use miwa::derive::interface;
 use uuid::Uuid;
 
 use crate::{
@@ -13,29 +12,13 @@ use crate::{
 };
 
 #[async_trait::async_trait]
+#[interface]
 pub trait TodoRepo {
     async fn create(&self, create: CreateTodo) -> Result<Todo, TodoError>;
     async fn update(&self, id: Uuid, update: UpdateTodo) -> Result<Todo, TodoError>;
     async fn get(&self, id: Uuid) -> Result<Todo, TodoError>;
     async fn fetch(&self, pagination: Pagination) -> Result<Vec<Todo>, TodoError>;
     async fn delete(&self, id: Uuid) -> Result<(), TodoError>;
-}
-
-#[derive(Injectable, Clone)]
-pub struct TodoRepoImpl(Arc<dyn TodoRepo + Send + Sync + 'static>);
-
-impl Deref for TodoRepoImpl {
-    type Target = dyn TodoRepo + Send + Sync + 'static;
-
-    fn deref(&self) -> &Self::Target {
-        self.0.as_ref()
-    }
-}
-
-impl TodoRepoImpl {
-    pub fn new(repo: impl TodoRepo + Send + Sync + 'static) -> Self {
-        TodoRepoImpl(Arc::new(repo))
-    }
 }
 
 pub struct InMemoryTodoRepo(Arc<RwLock<HashMap<Uuid, Todo>>>);

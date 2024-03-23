@@ -6,7 +6,7 @@ use miwa_axum::{WebService, WebServiceConfigBuilder};
 use serde::Deserialize;
 
 use crate::handler::{todos_create, todos_delete, todos_get, todos_index, todos_update};
-use crate::repo::{InMemoryTodoRepo, TodoRepoImpl};
+use crate::repo::{InMemoryTodoRepo, TodoRepoRef};
 
 pub struct TodoApiExtension;
 
@@ -34,9 +34,9 @@ impl Extension for TodoStoreExtension {
     }
 }
 
-#[extension(name = "Todo In Memory extension", provides(TodoRepoImpl))]
+#[extension(name = "Todo In Memory extension", provides(TodoRepoRef))]
 pub async fn todo_repo_extension(ctx: &MiwaContext) -> MiwaResult<TodoStoreExtension> {
-    ctx.register(TodoRepoImpl::new(InMemoryTodoRepo::new()));
+    ctx.register(TodoRepoRef::wrap(InMemoryTodoRepo::new()));
     Ok(TodoStoreExtension)
 }
 
@@ -49,7 +49,7 @@ pub struct TodoApi {
 #[extension(name = "Todo API extension")]
 pub async fn todo_api_extension(
     web: WebService,
-    repo: TodoRepoImpl,
+    repo: TodoRepoRef,
     ExtensionConfig(cfg): ExtensionConfig<TodoApi>,
 ) -> MiwaResult<TodoApiExtension> {
     web.add_server(
@@ -62,7 +62,7 @@ pub async fn todo_api_extension(
     Ok(TodoApiExtension)
 }
 
-fn configure_web_server(web: WebService, repo: TodoRepoImpl) {
+fn configure_web_server(web: WebService, repo: TodoRepoRef) {
     web.merging(
         "default",
         Router::new()
