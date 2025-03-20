@@ -36,7 +36,7 @@ impl Extension for TodoStoreExtension {
 
 #[extension(name = "Todo In Memory extension", provides(TodoRepoRef))]
 pub async fn todo_repo_extension(ctx: &MiwaContext) -> MiwaResult<TodoStoreExtension> {
-    ctx.register(TodoRepoRef::wrap(InMemoryTodoRepo::new()));
+    ctx.register(TodoRepoRef::of(InMemoryTodoRepo::new()));
     Ok(TodoStoreExtension)
 }
 
